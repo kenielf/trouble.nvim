@@ -164,6 +164,7 @@ function M.get_locations(method, cb, ctx, opts)
   local buf = vim.api.nvim_get_current_buf()
   local cursor = vim.api.nvim_win_get_cursor(win)
   local col = cursor[2]
+  local clients = vim.lsp.get_clients({ bufnr = buf })
 
   local line = vim.api.nvim_get_current_line()
   while col > 1 and vim.fn.strcharpart(line, col - 1, 1):match("^[a-zA-Z_]$") do
@@ -172,7 +173,7 @@ function M.get_locations(method, cb, ctx, opts)
 
   opts = opts or {}
   ---@type lsp.TextDocumentPositionParams
-  local params = opts.params or vim.lsp.util.make_position_params(win)
+  local params = opts.params or vim.lsp.util.make_position_params(win, clients[1].offset_encoding or 'utf-16')
   ---@diagnostic disable-next-line: inject-field
   params.context = params.context or opts.context or nil
 
